@@ -1,0 +1,16 @@
+java.source=1.8
+java.target=1.8
+app.name=Ant
+lib.dir=lib
+src.dir=src/test/java
+resources.dir=src/test/resources
+build.dir=target
+dist.dir=${build.dir}/dist
+classes.dir=${build.dir}/classes
+classes.test.dir=${build.dir}/test-classes
+config.dir=${classes.dir}/config
+resources.test.dir=src/test/resources
+runner.dir=${src.dir}/runner
+lib.compile.dir=${lib.dir}/compile
+reports.dir=${build.dir}/reports
+reports.junit.dir=${reports.dir}/junit

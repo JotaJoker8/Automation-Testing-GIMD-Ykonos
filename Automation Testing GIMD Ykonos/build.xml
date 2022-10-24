@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<project name="ProjectAnt" basedir=".">
+	
+	<property file="build.properties"/>
+	
+	<macrodef name="compile-test">
+		
+		<sequential>	
+			<echo message="Compilando Clases"/>
+			
+			<delete dir="${classes.dir}"/>
+			<mkdir dir="${classes.dir}"/>
+			<delete dir="${reports.dir}"/>
+			<mkdir dir="${reports.dir}"/>
+			<delete dir="${config.dir}"/>
+			<mkdir dir="${config.dir}"/>
+			
+			<javac srcdir="${src.dir}" destdir="${classes.dir}" source="${java.source}" includeantruntime="false">
+				<classpath>
+					<pathelement location="${classes.dir}"/>
+					<pathelement location="${lib.compile.dir}/junit-4.12.jar"/>
+					<fileset dir="${lib.compile.dir}" includes="*.jar"></fileset>
+				</classpath>
+			</javac>	
+			
+			<copy todir="${classes.test.dir}">
+				<fileset dir="${src.dir}"></fileset>	
+			</copy>
+			
+			<copy todir="${config.dir}">
+				<fileset dir="${resources.dir}/config"></fileset>	
+			</copy>
+			
+		</sequential>
+		
+	</macrodef>
+	
+	<target name="test">
+		
+		<echo message="Pasando los Test"/>
+		
+		<path id="classpath">
+			<fileset dir="${lib.compile.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		
+		<compile-test/>
+		
+		<delete dir="${reports.junit.dir}/xml"/>
+		<mkdir dir="${reports.junit.dir}/xml"/>
+		
+		<junit>
+	  		<classpath>
+	  			<pathelement location="${classes.dir}"/>
+	      		<pathelement location="${lib.compile.dir}/junit-4.12.jar"/>
+	  			<fileset dir="${lib.compile.dir}" includes="*.jar"></fileset>
+	    	</classpath>    
+	    	<batchtest fork="yes" todir="${reports.junit.dir}/xml">
+	    		<formatter type="xml"/>
+	       		<fileset dir="${src.dir}">
+	       			<include name="**/Runner.java" />
+	       		</fileset>
+	    	</batchtest>
+		</junit>
+		
+	</target>
+	
+	<target name="reports-html" depends="test">
+		
+		<echo message="Generando html"/>
+		
+		<delete dir="${reports.junit.dir}/html"/>
+		<mkdir dir="${reports.junit.dir}/html"/>
+		
+		<junitreport todir="${reports.dir}">
+			<fileset dir="${reports.junit.dir}/xml" includes="TEST-*.xml" />
+			<report format="noframes" todir="${reports.junit.dir}/html">
+				<param name="TITLE" expression="${app.name}" />
+			</report>
+		</junitreport>
+		
+	</target>
+	
+</project>
